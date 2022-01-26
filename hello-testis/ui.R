@@ -1,6 +1,6 @@
 library(shiny)
 
-source("/work/hello-testis/global.R")
+genes <- readRDS("/work/hello-testis/genes.rds")
 
 #----------------------------------------------------------------------------------------------------
 ############## UI ##############
@@ -21,7 +21,8 @@ shinyUI(
             # Sidebar panel for inputs ----
             sidebarPanel(
 
-                helpText("From Undifferented spermatogonia to elongating spermatids during mouse spermatogenesis"),
+                helpText("From SSC(spermatogonial stem cells) to ES(elongating spermatids) during mouse spermatogenesis"),
+                # img(src="/work/hello-testis/spermatogenesis.png"),
 
                 # Input : Slider for the number of bins ----
 
@@ -44,6 +45,11 @@ shinyUI(
                     label = "Select motifs to plot \n (default : NONE)",
                     choices = NULL,
                     selected = NULL
+                ),
+
+                checkboxInput(
+                    "chip",
+                    label = "Display ChIP-seq peaks (D)\n (default : FALSE)"
                 ),
 
                 checkboxInput(
