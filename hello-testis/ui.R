@@ -13,6 +13,12 @@ shinyUI(
         # App title ----
         titlePanel("Hello, testis"),
 
+        # sidebarLayout(
+        #     position = "right",
+        #     helpText("The figure below is a good combination of Shogi pieces, just like scRNA and scATAC."),
+        #     img(src="logo.png")
+        # ),
+
         # Sidebar layout with input and output definitions ----
         sidebarLayout(
 
@@ -20,9 +26,8 @@ shinyUI(
 
             # Sidebar panel for inputs ----
             sidebarPanel(
-
+                # img(src="logo.png"),
                 helpText("From SSC(spermatogonial stem cells) to ES(elongating spermatids) during mouse spermatogenesis"),
-                # img(src="/work/hello-testis/spermatogenesis.png"),
 
                 # Input : Slider for the number of bins ----
 
@@ -30,7 +35,7 @@ shinyUI(
                     "symbol",
                     label = "Select a gene symbol to plot (B~F)",
                     choices = genes,
-                    selected = "Stra8"
+                    selected = "Yy1"
                     ),
                 
                 selectInput(
@@ -53,9 +58,14 @@ shinyUI(
                 ),
 
                 checkboxInput(
-                    "containSoma",
-                    label = "Containing Somatic cells (for TF footprinting) (G)\n (default : Only Germ cells)"
+                    "footprint",
+                    label = "Display TF footprinting if the motif exists (G) (Plotting takes more time.)"
                 ),
+
+                # checkboxInput(
+                #     "containSoma",
+                #     label = "Containing Somatic cells (for TF footprinting) (G)\n (default : Only Germ cells)"
+                # ),
                 
                 actionButton("goButton", "GO!!!")),
 
@@ -75,7 +85,10 @@ shinyUI(
                 h4("F. Motif accessibility along with pseudotime"),
                 plotOutput(outputId = "etc"),
 
-                h3("G. TF footprinting"))
+                h3("G. TF footprinting"),
+                plotOutput(outputId = "footprint")
+                ),
+
         ),
 
         # Footer ----
@@ -84,6 +97,6 @@ shinyUI(
             tags$a(href = "https://github.com/Hattyoriiiiiii", "Maezawa lab", icon("github"))
         ),
 
-        includeCSS("style.css")
+        includeCSS("www/style.css")
     )
 ))

@@ -1,3 +1,10 @@
 ArchRLogs
 Save-proj_*
 *.rds
+*.png
+*.pdf
+figures
+results
+thesis.md
+manuscript.md
+processed
