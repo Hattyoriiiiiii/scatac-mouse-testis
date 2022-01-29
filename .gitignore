@@ -1,10 +1,13 @@
 ArchRLogs
+tmp
 Save-proj_*
 *.rds
 *.png
 *.pdf
+*.arrow
+.RData
+.Rhistory
 figures
 results
-thesis.md
-manuscript.md
+paper
 processed
