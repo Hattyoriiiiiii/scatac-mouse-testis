@@ -121,6 +121,22 @@ qc_plot(
 dev.off()
 
 
+proj <- addGeneIntegrationMatrix(
+    ArchRProj = proj, 
+    useMatrix = "GeneScoreMatrix",
+    matrixName = "GeneIntegrationMatrix",
+    reducedDims = "IterativeLSI",
+    seRNA = sceRNA,
+    addToArrow = TRUE,
+    force = TRUE,
+    groupList = groupList,
+    groupRNA = "AnnotatedClusters",
+    nameCell = "predictedCell",
+    nameGroup = "predictedGroup",
+    nameScore = "predictedScore")
+
+proj <- addImputeWeights(proj)
+
 saveArchRProject(
     ArchRProj = proj, 
     outputDirectory = outDir.ArchRProject, 
