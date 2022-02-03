@@ -22,6 +22,7 @@ addArchRGenome("Mm10")
 inDir.ArchRProject <- "processed/01_qc/01_proj_qc"
 
 outDir.ArchRProject <- "processed/02_filtering/01_proj_filtered"
+outDir.subsetArchRProject <- "processed/02_filtering/02_proj_filteredSub"
 outDir.proc <- "processed/02_filtering"
 outDir.fig <- "figures/02_filtering"
 outDir.res <- "results/02_filtering"
@@ -50,10 +51,10 @@ clustersRemove <- getCellColData(proj) %>%
     group_by(Clusters_qc) %>% 
     select(TSSEnrichment, nFrags, DoubletEnrichment) %>% 
     summarize(
+        n = n(),
         med_Doub = median(DoubletEnrichment),
         med_nFrag = median(nFrags),
-        Doublet = med_Doub > 1
-    ) %>% 
+        Doublet = med_Doub > 1 | n < 100) %>% 
     filter(Doublet == TRUE) %>% 
     select(Clusters_qc) %>% 
     as.vector
@@ -63,21 +64,22 @@ getCellColData(proj) %>%
     group_by(Clusters_qc) %>% 
     select(TSSEnrichment, nFrags, DoubletEnrichment) %>% 
     summarize(
+        n = n(),
         med_Doub = median(DoubletEnrichment),
         med_nFrag = median(nFrags),
-        Doublet = med_Doub > 1) %>% 
+        Doublet = med_Doub > 1 | n < 100) %>% 
     write.table(
         file = paste0(file.path(outDir.res, remove.table), ".csv"),
         quote = FALSE,
         sep = ",",
-        row.names = TRUE,
+        row.names = FALSE,
         col.names = TRUE)
 
 proj_sub <- subsetCells(
     proj, 
     cellNames = proj[proj$Clusters_qc %ni% clustersRemove$Clusters_qc &
-                       proj$nFrags < 25000 & 
-                       proj$DoubletEnrichment < 2.5]$cellNames)
+                       proj$nFrags < 30000 & 
+                       proj$DoubletEnrichment < 3]$cellNames)
 
 
 #----------------------------------------------------------------------------------------------------
@@ -97,7 +99,6 @@ proj_sub <- addIterativeLSI(
     ), 
     varFeatures = 30000, 
     dimsToUse = 1:50,
-    excludeChr = c("chrX", "chrY", "chrMT"),
     force = TRUE)
 
 # Clustering using Seurat’s FindClusters() function -----
@@ -119,6 +120,47 @@ proj_sub <- addUMAP(
     metric = "cosine",
     force = TRUE)
 
+#----------------------------------------------------------------------------------------------------
+############### Filtering low quality / number cells ###############
+#----------------------------------------------------------------------------------------------------
+
+clustersRemove <- getCellColData(proj_sub) %>%
+    as.data.frame() %>% 
+    group_by(Clusters) %>% 
+    select(TSSEnrichment, nFrags, DoubletEnrichment) %>% 
+    summarize(
+        n = n(),
+        med_Doub = median(DoubletEnrichment),
+        med_nFrag = median(nFrags),
+        Doublet = med_Doub > 1 | n < 50) %>% 
+    filter(Doublet == TRUE) %>% 
+    select(Clusters) %>% 
+    as.vector
+
+getCellColData(proj_sub) %>%
+    as.data.frame() %>% 
+    group_by(Clusters) %>% 
+    select(TSSEnrichment, nFrags, DoubletEnrichment) %>% 
+    summarize(
+        n = n(),
+        med_Doub = median(DoubletEnrichment),
+        med_nFrag = median(nFrags),
+        Doublet = med_Doub > 1 | n < 50) %>% 
+    write.table(
+        file = paste0(file.path(outDir.res, remove.table), "_lowQuality.csv"),
+        quote = FALSE,
+        sep = ",",
+        row.names = FALSE,
+        col.names = TRUE)
+
+proj_sub <- addImputeWeights(proj_sub, reducedDims = "IterativeLSI")
+
+proj_sub <- subsetArchRProject(
+    proj_sub, 
+    cells = proj_sub[proj_sub$Clusters %ni% clustersRemove$Clusters]$cellNames,
+    outputDirectory = outDir.subsetArchRProject,
+    force = TRUE
+)
 
 #----------------------------------------------------------------------------------------------------
 ############### Quality Assessment ###############
@@ -170,7 +212,7 @@ getCellColData(proj_sub) %>%
         file = paste0(file.path(outDir.res, qc.table), ".csv"),
         quote = FALSE,
         sep = ",",
-        row.names = TRUE,
+        row.names = FALSE,
         col.names = TRUE)
 
 ##### Heatmap of gene score to asses quality of cell clusters
@@ -182,7 +224,6 @@ markersGS <- getMarkerFeatures(
     testMethod = "wilcoxon")
 
 markerList <- getMarkers(markersGS, cutOff = "FDR <= 0.01 & Log2FC >= 1.25")
-proj_sub <- addImputeWeights(proj_sub, reducedDims = "IterativeLSI")
 
 heatmapGS <- plotMarkerHeatmap(
     seMarker = markersGS,
@@ -200,5 +241,5 @@ dev.off()
 
 saveArchRProject(
     ArchRProj = proj_sub, 
-    outputDirectory = outDir.ArchRProject, 
+    outputDirectory = outDir.subsetArchRProject, 
     load = FALSE)

@@ -20,7 +20,7 @@ set.seed(42)
 addArchRThreads(threads = 32)
 addArchRGenome("Mm10")
 
-inDir.ArchRProject <- "processed/02_filtering/01_proj_filtered"
+inDir.ArchRProject <- "processed/02_filtering/02_proj_filteredSub"
 outDir.ArchRProject <- "processed/03_Integration_Un/03_proj_UnInteg"
 
 outDir.proc <- "processed/03_Integration_Un"

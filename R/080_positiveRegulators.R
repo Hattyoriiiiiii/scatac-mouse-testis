@@ -72,6 +72,13 @@ corGIM_MM %>%
         row.names = TRUE,
         col.names = TRUE)
 
+df <- read.csv(paste0(file.path(outDir.res, out.table), ".csv"))
+write.table(
+    df[df$TFRegulator == "YES",]$GeneIntegrationMatrix_name, 
+    file="gene_sets/positiveTFs_whole.txt", 
+    quote=FALSE, 
+    row.names=FALSE, 
+    col.names=FALSE)
 
 p <- ggplot(data.frame(corGIM_MM), aes(cor, maxDelta, color = TFRegulator)) +
   geom_point() + 

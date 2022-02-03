@@ -112,10 +112,10 @@ p2g_proximal <- metadata_p2g[metadata_p2g$peakType %in% c("Promoter"),]
 
 
 BroadAnno <- list(
-    SPG = cellOrder[1:3],
-    SCT = cellOrder[4:8],
-    STD = cellOrder[9:12],
-    SOMA = cellOrder[13:14])
+    SPG = cellOrder[1:2],
+    SCT = cellOrder[3:6],
+    STD = cellOrder[7:10],
+    SOMA = cellOrder[11:12])
 
 remap <- function(cell) {
     if (cell %in% BroadAnno$SPG) {

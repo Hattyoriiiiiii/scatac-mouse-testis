@@ -47,11 +47,11 @@ cSpg2Sct <- c("Undifferentiated_Spermatogonia", "Spermatogonia", "Differentiatin
 cLateScyte <- c("mP", "lP1", "lP2", "D", "MI", "MII")
 cStid <- c(paste0("S", 1:11))
 
-clustSertoli <- c("C6")
-clustSomatic <- c("C7")
-clustSpg2Sct <- c("C8", "C10", "C9", "C3", "C5", "C4")
-clustLateScyte <- c("C2", "C1")
-clustStid <- c("C11", "C12", "C13", "C14")
+clustSertoli <- c("C8")
+clustSomatic <- c("C9")
+clustSpg2Sct <- c("C3", "C4", "C5", "C6", "C7")
+clustLateScyte <- c("C2")
+clustStid <- c("C10", "C11", "C12", "C13")
 
 rnaSertoli <- colnames(sceRNA)[sceRNA$AnnotatedClusters %in% cSertoli]
 rnaSomatic <- colnames(sceRNA)[sceRNA$AnnotatedClusters %in% cSomatic]

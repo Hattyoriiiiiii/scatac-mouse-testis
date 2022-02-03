@@ -28,31 +28,7 @@ mkdir(outDir.fig)
 ############### Inputs ###############
 #----------------------------------------------------------------------------------------------------
 
-markerGenes <- read.table("gene_sets/positiveTFs_whole.txt")[["V1"]]
-markerGenes <- c(
-    "Nanos2",
-    "Sall4",
-    "Stra8",
-    "Prdm9",
-    "Spo11",
-    "Dmc1",
-    "Prss50",
-    "Piwil1",
-    "Adam3",
-    "Pgk2",
-    "Acrv1",
-    "Prm2",
-    "Sox9",
-    "Cldn11",
-    "Fabp3",
-    "Inhba",
-    "Sycp3",
-    "Rhox13",
-    "Meiob",
-    "Gata4",
-    "Neurog3",
-    "Lin28a"
-)
+markerGenes <- read.table("gene_sets/RepresentativeGenes.txt")[["V1"]]
 
 proj <- loadArchRProject(path = inDir.ArchRProject, showLogo = FALSE)
 cellOrder <- read.table("gene_sets/cellOrder_whole.txt")[["V1"]]

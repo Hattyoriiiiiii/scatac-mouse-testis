@@ -101,9 +101,9 @@ proj <- addIterativeLSI(
     ArchRProj = proj,
     useMatrix = "TileMatrix", 
     name = "IterativeLSI_qc", 
-    iterations = 2, 
+    iterations = 5, 
     clusterParams = list( #See Seurat::FindClusters
-        resolution = c(0.2), 
+        resolution = c(0.1, 0.2, 0.4, 0.8), 
         sampleCells = 10000, 
         n.start = 10
     ), 
@@ -153,8 +153,8 @@ p <- ggPoint(
         y=proj$DoubletEnrichment,
         colorDensity = T,
         rastr = T) +
-    geom_hline(yintercept = 2.5, col="red", lty="dashed") +
-    geom_vline(xintercept = 25000, col="red", lty="dashed") +
+    geom_hline(yintercept = 3, col="red", lty="dashed") +
+    geom_vline(xintercept = 30000, col="red", lty="dashed") +
     xlab("nFragments") +
     ylab("DoubletEnrichment")
 print(p)
@@ -185,7 +185,7 @@ getCellColData(proj) %>%
         file = paste0(file.path(outDir.res, qc.table), ".csv"),
         quote = FALSE,
         sep = ",",
-        row.names = TRUE,
+        row.names = FALSE,
         col.names = TRUE)
 
 ##### Heatmap of gene score to asses quality of cell clusters
