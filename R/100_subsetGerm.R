@@ -37,9 +37,9 @@ mkdir(outDir.res)
 proj <- loadArchRProject(path = inDir.ArchRProject, showLogo = FALSE)
 
 cellOrder <- read.table("gene_sets/cellOrder_whole.txt")[["V1"]]
-cellOrder_germ <- cellOrder[1:12]
+cellOrder_germ <- cellOrder[1:10]
 
-markerGenes <- read.table("gene_sets/markersHermann2018.txt")[["V1"]]
+markerGenes <- read.table("gene_sets/RepresentativeGerm.txt")[["V1"]]
 
 #----------------------------------------------------------------------------------------------------
 ############### Cell-type definition based on gene score and signal track ###############
@@ -58,7 +58,6 @@ proj_germ <- addIterativeLSI(
         sampleCells = 10000, 
         n.start = 10), 
     varFeatures = 30000, 
-    excludeChr = c("chrX", "chrY", "chrMT"),
     dimsToUse = 1:50,
     force = TRUE)
 
@@ -69,7 +68,7 @@ proj_germ <- addClusters(
     reducedDims = "IterativeLSI_Germ",
     method = "Seurat",
     name = "Clusters_Germ",
-    resolution = 1.5,
+    resolution = 1.6,
     force = TRUE)
 
 # UMAP embedding -----
