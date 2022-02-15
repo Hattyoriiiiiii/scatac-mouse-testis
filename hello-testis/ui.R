@@ -35,7 +35,7 @@ shinyUI(
                     "symbol",
                     label = "Select a gene symbol to plot (B~F)",
                     choices = genes,
-                    selected = "Yy1"
+                    selected = "Sox4"
                     ),
                 
                 selectInput(

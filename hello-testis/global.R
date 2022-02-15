@@ -1,20 +1,44 @@
-library(ArchR)
-# library(tidyverse)
-# library(gridExtra)
+suppressPackageStartupMessages({
+    library(ArchR)
+})
+
+#----------------------------------------------------------------------------------------------------
+############### Set up ###############
+#----------------------------------------------------------------------------------------------------
 
 set.seed(42)
+addArchRThreads(threads = 32)
+addArchRGenome("Mm10")
+
+inDir.ArchRProject <- "/work/proj_germ_final"
 
 print("Please wait...")
-proj <- loadArchRProject(path = "/work/Save-proj_traj/", showLogo = FALSE)
-# proj <- addImputeWeights(proj)
+proj <- loadArchRProject(path = inDir.ArchRProject, showLogo = FALSE)
 
-# motifPositions <- readRDS("/work/hello-testis/motifPositions.rds")
+
 motifPositions <- getPositions(proj)
 genes <- readRDS("/work/hello-testis/genes.rds")
-GermTrajectory <- c("Undiff_1", "Undiff_2", "Diff", "Lep", "Zyg_eP", "Pac_Dip", "RS_1", "RS_2", "RS_3", "ES")
-cellOrder <- c("Undiff_1", "Undiff_2", "Diff", "Lep", "Zyg_eP", "Pac_Dip", "RS_1", "RS_2", "RS_3", "ES", "Sertoli", "Soma")
-# proj <- addGroupCoverages(ArchRProj = proj, groupBy = "ClustersAnno", force=TRUE)
+cellOrder <- read.table("/work/gene_sets/cellOrder_germ.txt")[["V1"]]
+cluster_name <- "ClustersGerm"
+embedding <- "UMAP_Germ"
+trajectory <- "WholeGermU"
 
+SpgTrajectory <- cellOrder[1:4]
+SctTrajectory <- cellOrder[5:9]
+StdTrajectory <- cellOrder[10:13]
+Spg2SctTrajectory <- cellOrder[3:7]
+Sct2StdTrajectory <- cellOrder[7:10]
 
-print(getAvailableMatrices(proj))
-# saveArchRProject(ArchRProj = proj, outputDirectory = "/work/Save-proj_traj", load = FALSE)
+i <- 1
+trajName <- c("WholeGermU", "SpgU", "SctU", "StdU", "Spg2SctU", "Sct2StdU")
+trajCell <- list(
+    cellOrder, SpgTrajectory, SctTrajectory, 
+    StdTrajectory, Spg2SctTrajectory, Sct2StdTrajectory)
+
+proj <- addTrajectory(
+    ArchRProj = proj, 
+    name = trajName[i], 
+    groupBy = cluster_name,
+    trajectory = trajCell[[i]], 
+    embedding = embedding, 
+    force = TRUE)

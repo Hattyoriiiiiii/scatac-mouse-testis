@@ -1,6 +1,7 @@
 library(shiny)
 
 source("/work/hello-testis/global.R")
+source("/work/R/functions.R")
 
 #----------------------------------------------------------------------------------------------------
 ############## Server ##############
@@ -18,15 +19,15 @@ shinyServer(function(input, output) {
             p <- plotEmbedding(
                 proj, 
                 colorBy = "cellColData", 
-                embedding = "UMAP",
-                name = "ClustersAnno")
+                embedding = embedding,
+                name = cluster_name)
                 
             p1 <- plotEmbedding(
                 ArchRProj = proj, 
                 colorBy = "GeneScoreMatrix", 
                 continuousSet = "horizonExtra",
                 name = input$symbol, 
-                embedding = "UMAP",
+                embedding = embedding,
                 imputeWeights = getImputeWeights(proj))
 
             p2 <- plotEmbedding(
@@ -34,14 +35,14 @@ shinyServer(function(input, output) {
                 colorBy = "GeneIntegrationMatrix", 
                 name = input$symbol, 
                 continuousSet = "coolwarm",
-                embedding = "UMAP",
+                embedding = embedding,
                 imputeWeights = getImputeWeights(proj))
 
             ggAlignPlots(p, p1, p2, type = "h")
 
             # p2 <- plotBrowserTrack(
             #     ArchRProj = proj,
-            #     groupBy = "ClustersAnno",
+            #     groupBy = cluster_name,
             #     useGroups = cellOrder,
             #     geneSymbol = c("Nanos2", "Stra8", "Sox9"),
             #     upstream = 250000,
@@ -57,7 +58,7 @@ shinyServer(function(input, output) {
             # if (input$selected == NULL) {
                 p <- plotBrowserTrack(
                     ArchRProj = proj, 
-                    groupBy = "ClustersAnno", 
+                    groupBy = cluster_name, 
                     useGroups = cellOrder,
                     geneSymbol = input$symbol, 
                     upstream = 50000,
@@ -68,7 +69,7 @@ shinyServer(function(input, output) {
             #     markersPeaks <- loadRDS("/path/to/markerPeaks.rds")
             #     p <- plotBrowserTrack(
             #         ArchRProj = proj, 
-            #         groupBy = "ClustersAnno", 
+            #         groupBy = cluster_name, 
             #         useGroups = cellOrder,
             #         geneSymbol = input$symbol, 
             #         features =  getMarkers(markersPeaks, cutOff = "FDR <= 0.1 & Log2FC >= 1", returnGR = TRUE)[input$selected],
@@ -87,25 +88,35 @@ shinyServer(function(input, output) {
             motifs <- c(input$symbol)
             markerMotifs <- unlist(lapply(paste0("^", motifs, "_"), function(x) grep(x, names(motifPositions), value = TRUE)))
 
+            p <- plotTrajectory(
+                proj, 
+                trajectory = trajName[i], 
+                embedding = embedding,
+                colorBy = "cellColData", 
+                continuousSet = "beach",
+                name = trajName[i])[[1]]
+
             p1 <- plotTrajectory(
                 proj, 
-                trajectory = "GermU", 
+                trajectory = trajName[i], 
                 colorBy = "GeneIntegrationMatrix", 
                 name = input$symbol,
+                embedding = embedding,
                 imputeWeights = getImputeWeights(proj),
                 addArrow = FALSE,
                 continuousSet = "coolwarm")
 
             p2 <- plotTrajectory(
                 proj, 
-                trajectory = "GermU", 
-                colorBy = "cisBPchromVar",
+                trajectory = trajName[i], 
+                colorBy = "cisBPchromVar_Germ",
                 name = paste0("z:", markerMotifs),
+                embedding = embedding,
                 imputeWeights = getImputeWeights(proj),
                 addArrow = FALSE,
                 continuousSet = "solarExtra")
 
-            ggAlignPlots(p1[[2]], p2[[2]], type="h")
+            ggAlignPlots(p, p1[[2]], p2[[2]], type="h")
             # g1 <- ggplotGrob(p1[[2]])
             # g2 <- ggplotGrob(p2[[2]])
             # g <- rbind(g1, g2, size = "first")
@@ -114,13 +125,6 @@ shinyServer(function(input, output) {
         })
 
         output$footprint <- renderPlot({
-
-            # if (containSoma) {
-            #     cluster_name <- "ClustersAnno"
-            # } else {
-            #     cluster_name <- "ClustersAnno"  # Germ
-            # }
-            cluster_name <- "ClustersAnno"
 
             motifs <- c(input$symbol)
             markerMotifs <- unlist(lapply(paste0("^", motifs, "_"), function(x) grep(x, names(motifPositions), value = TRUE)))
