@@ -55,15 +55,30 @@ shinyServer(function(input, output) {
         # これをplotBrowserTrackに組み込む
         
         output$track <- renderPlot({
+            
+            annotation_list <- list()
+            annotation_list[[input$motifs]] <- motifPositions[[input$motifs]] + 100L
+            
+            peaks_specific <- input$peaks
+
+            if (peaks_specific == "all") {
+                annotation_list[["All peaks"]] <- peakSet
+            } else {
+                annotation_list[[peaks_specific]] <- peakSet[names(peakSet) == peaks_specific]
+            }
+
             # if (input$selected == NULL) {
                 p <- plotBrowserTrack(
                     ArchRProj = proj, 
                     groupBy = cluster_name, 
                     useGroups = cellOrder,
+                    features = GenomicRangesList(annotation_list),
                     geneSymbol = input$symbol, 
+                    normMethod = "nFrags",
                     upstream = 50000,
                     downstream = 50000,
-                    loops = getPeak2GeneLinks(proj))
+                    loops = getPeak2GeneLinks(proj),
+                    facetbaseSize = 12)
                 # print(p)
             # } else {
             #     markersPeaks <- loadRDS("/path/to/markerPeaks.rds")

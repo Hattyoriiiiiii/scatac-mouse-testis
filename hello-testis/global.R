@@ -42,3 +42,5 @@ proj <- addTrajectory(
     trajectory = trajCell[[i]], 
     embedding = embedding, 
     force = TRUE)
+
+peakSet <- proj@peakSet

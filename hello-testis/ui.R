@@ -11,7 +11,9 @@ shinyUI(
         fluidPage(
 
         # App title ----
-        titlePanel("Hello, testis"),
+        titlePanel("Hello, testis",
+            tags$head(tags$link(rel = "icon", type = "image/pmg", href = "logo.png"))
+        ),
 
         # sidebarLayout(
         #     position = "right",
@@ -41,15 +43,15 @@ shinyUI(
                 selectInput(
                     "peaks",
                     label = "Select peaks set to plot (D)\n (default : all detected peaks)",
-                    choices = NULL,
-                    selected = NULL # default : all
+                    choices = c("all", cellOrder),
+                    selected = "all" # default : all
                 ),
 
                 selectInput(
                     "motifs",
                     label = "Select motifs to plot \n (default : NONE)",
-                    choices = NULL,
-                    selected = NULL
+                    choices = names(motifPositions),
+                    selected = "Dmrt1_251"
                 ),
 
                 checkboxInput(
@@ -93,7 +95,6 @@ shinyUI(
 
         # Footer ----
         tags$footer(
-            # tags$a("Maezawa lab", icon("github"))
             tags$a(href = "https://github.com/Hattyoriiiiiii", "Maezawa lab", icon("github"))
         ),
 
