@@ -12,7 +12,7 @@ shinyUI(
 
         # App title ----
         titlePanel("Hello, testis",
-            tags$head(tags$link(rel = "icon", type = "image/pmg", href = "logo.png"))
+            tags$head(tags$link(rel = "icon", type = "image/png", href = "logo.png"))
         ),
 
         # sidebarLayout(
@@ -48,11 +48,25 @@ shinyUI(
                 ),
 
                 selectInput(
-                    "motifs",
-                    label = "Select motifs to plot \n (default : NONE)",
-                    choices = names(motifPositions),
-                    selected = "Dmrt1_251"
+                    "tfbs_tf",
+                    label = "Select TFBS to plot \n (default : Dmrt1)",
+                    choices = c(TFBSs),
+                    selected = "Dmrt1_MA1603.1"
                 ),
+
+                selectInput(
+                    "tfbs_celltype",
+                    label = "Select cell-type for TFBS to plot \n (default : SSC_1)",
+                    choices = cellOrder,
+                    selected = "SSC_1"
+                ),
+
+                # selectInput(
+                #     "motifs",
+                #     label = "Select motifs to plot \n (default : Dmrt1)",
+                #     choices = names(motifPositions),
+                #     selected = "Dmrt1_251"
+                # ),
 
                 checkboxInput(
                     "chip",

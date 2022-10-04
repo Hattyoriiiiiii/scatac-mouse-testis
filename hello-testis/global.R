@@ -44,3 +44,4 @@ proj <- addTrajectory(
     force = TRUE)
 
 peakSet <- proj@peakSet
+TFBSs <- read.table("/work/hello-testis/TFBSlists.txt")[["V1"]]

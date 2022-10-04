@@ -1,4 +1,5 @@
 library(shiny)
+library(ChIPpeakAnno)
 
 source("/work/hello-testis/global.R")
 source("/work/R/functions.R")
@@ -57,7 +58,12 @@ shinyServer(function(input, output) {
         output$track <- renderPlot({
             
             annotation_list <- list()
-            annotation_list[[input$motifs]] <- motifPositions[[input$motifs]] + 100L
+            # annotation_list[[input$motifs]] <- motifPositions[[input$motifs]] + 100L
+            # read bed files
+            annotation_list[[paste0(strsplit(input$tfbs_tf, "_")[[1]][1], "-", input$tfbs_celltype)]] <- toGRanges(
+                file.path(
+                    "/work/tobias/bindetect_output", 
+                    paste0(input$tfbs_tf, "/beds/", input$tfbs_tf, "_", input$tfbs_celltype, "_footprints_bound.bed")), format = "narrowPeak") + 100L
             
             peaks_specific <- input$peaks
 
