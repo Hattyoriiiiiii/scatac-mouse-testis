@@ -1,5 +1,6 @@
 suppressPackageStartupMessages({
     library(ArchR)
+    library(ChIPpeakAnno)
 })
 
 #----------------------------------------------------------------------------------------------------
@@ -7,7 +8,7 @@ suppressPackageStartupMessages({
 #----------------------------------------------------------------------------------------------------
 
 set.seed(42)
-addArchRThreads(threads = 32)
+addArchRThreads(threads = 8)
 addArchRGenome("Mm10")
 
 inDir.ArchRProject <- "/work/proj_germ_final"
@@ -45,3 +46,15 @@ proj <- addTrajectory(
 
 peakSet <- proj@peakSet
 TFBSs <- read.table("/work/hello-testis/TFBSlists.txt")[["V1"]]
+
+# Ch
+chip <- lapply(list.files(path = "/work/hello-testis/chip/", pattern="*.bed"), function(x) gsub("(.idr|).bed", "", x))
+chip <- unlist(chip)
+TFs.grl <- GRangesList()
+
+for (tf in chip) {
+    file <- list.files(path = "/work/hello-testis/chip/", pattern=paste0(tf, "(.idr|).bed"))
+    path <- paste0("/work/hello-testis/chip/", file)
+    gr <- toGRanges(path, format = "narrowPeak")
+    TFs.grl[[tf]] <- gr
+}

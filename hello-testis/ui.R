@@ -1,4 +1,5 @@
 library(shiny)
+library(shinybusy)
 
 genes <- readRDS("/work/hello-testis/genes.rds")
 
@@ -9,6 +10,11 @@ genes <- readRDS("/work/hello-testis/genes.rds")
 shinyUI(
     tagList(
         fluidPage(
+
+        add_busy_gif(
+        src = "https://jeroen.github.io/images/banana.gif",
+        height = 100, width = 100
+        ),
 
         # App title ----
         titlePanel("Hello, testis",
@@ -39,7 +45,9 @@ shinyUI(
                     choices = genes,
                     selected = "Sox4"
                     ),
-                
+
+                sliderInput("distance", label = "Distance (kb):", min = -500, max = 500, value = c(-50, 50)),
+
                 selectInput(
                     "peaks",
                     label = "Select peaks set to plot (D)\n (default : all detected peaks)",
@@ -68,15 +76,17 @@ shinyUI(
                 #     selected = "Dmrt1_251"
                 # ),
 
-                checkboxInput(
-                    "chip",
-                    label = "Display ChIP-seq peaks (D)\n (default : FALSE)"
+                selectInput(
+                    "chip_tf",
+                    label = "Display ChIP-seq peaks (D)\n (default : DMRT1)",
+                    choices = c(chip),
+                    selected = "DMRT1"
                 ),
 
-                checkboxInput(
-                    "footprint",
-                    label = "Display TF footprinting if the motif exists (G) (Plotting takes more time.)"
-                ),
+                # checkboxInput(
+                #     "footprint",
+                #     label = "Display TF footprinting if the motif exists (G) (Plotting takes more time.)"
+                # ),
 
                 # checkboxInput(
                 #     "containSoma",
@@ -115,3 +125,41 @@ shinyUI(
         includeCSS("www/style.css")
     )
 ))
+
+
+# about_panel <- tabPanel(
+
+#   titlePanel(h5("About")),
+#   # Various tabs.
+#   tabsetPanel(
+#     # General info.
+#     tabPanel(
+#       "Overview",
+#       tags$h3("Scope"),
+#       tags$p(HTML("ShinyArchR.UiO is a user-friendly, integrative open-source Shiny-based web app using R programming for visualization of massive single-cell chromatin accessibility data (scATAC-seq) based on <a href=\"https://www.archrproject.com\" target=\"_blank\">ArchR</a> (Corces et al., 2021).")),
+#       tags$h3("Approach"),
+      
+#       tags$p(HTML(" The ArchR objects saved in folders along with HDF5 formatted Arrow files are used for input in ShinyArchR.UiO.")),
+#       tags$h5("Data Visualization of ShinyArchR.UiO:"),
+#       tags$ul(
+#         tags$li(HTML("scATAC-seq clusters, unconstrained and constrained clusters on integrated reduced dimensions UMAP from ArchR objects")),
+#         tags$li(HTML("Peaks using plot browser tracks on clusters on scATAC-seq modality")),
+#         tags$li(HTML("Peaks2Genelinks tracks on single-cell RNA sequencing (scRNA-seq) integrated data with scATAC-seq using plot browser tracks. The co-accessibility among the genes can be visualized in the bottom panel")),
+#         tags$li(HTML("Heatmaps of pseudo time trajectory")),
+#         tags$li(HTML("Heatmaps of top 50 markers Peak2Genelinks in scATAC-seq and scRNA-seq")),
+
+#         )
+#     ),
+    
+
+#     # About us .
+#     tabPanel(
+#       "About us ",
+#       tags$h3("Contributions and Citation info"),
+#       tags$p(HTML("ShinyArchR.UiO software is developed by <a href=\"https://github.com/Hattyoriiiiiii\" target=\"_blank\">Hattyoriiiiiii</a> at <a href=\"https://www.uio.no\" target=\"_blank\">Tokyo University of Science</a>, as an open-source project mainly under the GPL license version 3 (see source code for details).")),
+#       tags$p(HTML("If ShinyArchR.UiO in any way help you in visualizing and sharing your research work such that it warrants a citation, please cite the ShinyArchR.UiO preprint in BioRXiv or the final publication.")),
+#     )
+
+#   )
+
+# )

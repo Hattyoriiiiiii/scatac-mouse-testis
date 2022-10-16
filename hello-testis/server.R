@@ -58,6 +58,7 @@ shinyServer(function(input, output) {
         output$track <- renderPlot({
             
             annotation_list <- list()
+            annotation_list[[input$chip_tf]] <- TFs.grl[[input$chip_tf]]
             # annotation_list[[input$motifs]] <- motifPositions[[input$motifs]] + 100L
             # read bed files
             annotation_list[[paste0(strsplit(input$tfbs_tf, "_")[[1]][1], "-", input$tfbs_celltype)]] <- toGRanges(
@@ -80,9 +81,10 @@ shinyServer(function(input, output) {
                     useGroups = cellOrder,
                     features = GenomicRangesList(annotation_list),
                     geneSymbol = input$symbol, 
+                    sizes = c(14, 3, 2, 4),
                     normMethod = "nFrags",
-                    upstream = 50000,
-                    downstream = 50000,
+                    upstream = -input$distance[1]*1000, #50000, # -input$range_min)*1000,
+                    downstream = input$distance[2]*1000, #50000, # input$range_max)*1000,
                     loops = getPeak2GeneLinks(proj),
                     facetbaseSize = 12)
                 # print(p)
